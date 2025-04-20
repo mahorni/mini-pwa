@@ -1,0 +1,18 @@
+from flask import Flask, request
+import os
+
+app = Flask(__name__)
+UPLOAD_FOLDER = 'uploads'
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+@app.route('/upload', methods=['POST'])
+def upload_photo():
+    file = request.files['photo']
+    if file:
+        filepath = os.path.join(UPLOAD_FOLDER, file.filename)
+        file.save(filepath)
+        return f"Photo saved to {filepath}", 200
+    return "No file received", 400
+
+if __name__ == '__main__':
+    app.run(debug=True)
