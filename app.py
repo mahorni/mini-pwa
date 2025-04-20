@@ -1,16 +1,23 @@
-from flask import Flask, request
+from flask import Flask, request, send_from_directory
 from flask_cors import CORS
 import os
 
-app = Flask(__name__)
-CORS(app)  # Enables CORS
+# Tell Flask that 'static' is your static folder, and serve it at URL '/'
+app = Flask(__name__, static_folder='static', static_url_path='')
+CORS(app)
 
 UPLOAD_FOLDER = 'uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
+# Serve index.html for the root URL
 @app.route('/')
 def index():
-    return "Flask upload server is running 🎉"
+    return app.send_static_file('index.html')
+
+# Serve any other static asset too (manifest.json, service-worker.js, etc.)
+@app.route('/<path:filename>')
+def static_files(filename):
+    return send_from_directory(app.static_folder, filename)
 
 @app.route('/upload', methods=['POST'])
 def upload_photo():
