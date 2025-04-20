@@ -3,24 +3,35 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Photo PWA</title>
+  <title>Photo Upload PWA</title>
   <link rel="manifest" href="manifest.json">
   <script>
-    // Register service worker for PWA features
+    // Register service worker for PWA offline support
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('service-worker.js');
     }
   </script>
   <style>
-    body { font-family: sans-serif; text-align: center; padding: 20px; }
-    img { max-width: 90%; margin-top: 20px; border-radius: 8px; }
-    input { margin-top: 20px; }
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      padding: 20px;
+    }
+    img {
+      max-width: 90%;
+      margin-top: 20px;
+      border-radius: 8px;
+    }
+    input {
+      margin-top: 20px;
+    }
   </style>
 </head>
 <body>
   <h1>Take or Upload a Photo</h1>
   <input type="file" accept="image/*" capture="environment" id="photoInput"><br>
-  <img id="preview" alt="Preview will appear here...">
+  <img id="preview" alt="Image preview will appear here">
+
   <script>
     const input = document.getElementById('photoInput');
     const preview = document.getElementById('preview');
@@ -28,19 +39,25 @@
     const upload = async (file) => {
       const formData = new FormData();
       formData.append('photo', file);
-      const res = await fetch('https://mini-pwa-4oej.onrender.com/upload', {
-        method: 'POST',
-        body: formData
-      });
-      const text = await res.text();
-      alert(text);
+
+      try {
+        const res = await fetch('https://mini-pwa-4oej.onrender.com/upload', {
+          method: 'POST',
+          body: formData
+        });
+
+        const text = await res.text();
+        alert(text);
+      } catch (err) {
+        alert('Upload failed: ' + err.message);
+      }
     };
 
     input.addEventListener('change', () => {
       const file = input.files[0];
       if (file) {
         preview.src = URL.createObjectURL(file);
-        upload(file); // Optional call to backend
+        upload(file); // Upload the photo
       }
     });
   </script>
