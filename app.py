@@ -8,6 +8,10 @@ CORS(app)  # Enables CORS
 UPLOAD_FOLDER = 'uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
+@app.route('/')
+def index():
+    return "Flask upload server is running 🎉"
+
 @app.route('/upload', methods=['POST'])
 def upload_photo():
     file = request.files.get('photo')
